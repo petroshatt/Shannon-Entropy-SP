@@ -1,7 +1,10 @@
 import math
 import scipy
 import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import norm
 from collections import defaultdict
+import statistics
 
 
 def discretize(EEG_data):
@@ -24,9 +27,9 @@ def discretize(EEG_data):
         bounds.append(boundToAdd)
     bounds.append(EEG_data.max())
 
-    print("Min: ", EEG_data.min())
-    print("Max: ", EEG_data.max())
-    print(bounds)
+    # print("Min: ", EEG_data.min())
+    # print("Max: ", EEG_data.max())
+    # print(bounds)
 
     for i in range(len(EEG_data)):
         for j in range(len(EEG_data[0])):
@@ -51,41 +54,69 @@ def discretize(EEG_data):
             elif bounds[9] <= EEG_data[i][j] <= bounds[10]:
                 EEG_data[i][j] = 9
 
-    unique, counts = np.unique(EEG_data, return_counts=True)
-    print(np.asarray((unique, counts)).T)
+    # unique, counts = np.unique(EEG_data, return_counts=True)
+    # print(np.asarray((unique, counts)).T)
 
     return EEG_data
 
 
 def ShEn(EEG_data):
     """
-    Shannon Entropy calculation, counting patterns of a specific length using a dict,
+    Shannon Entropy calculation, counting patterns of a specific length using a dict in each row,
     calculating each pattern's probability and using it for the Shannon Entropy formula
     :param EEG_data: The dataset's subset
-    :return: Subset's calculated Shannon Entropy
+    :return: List with subset's 100 entropies
     """
 
     EEG_data = discretize(EEG_data)
 
     patterns = defaultdict(int)
+    entropies = []
+
+    totalPossiblePatterns = ((len(EEG_data[0]) - 2) * len(EEG_data))
 
     for row in range(len(EEG_data)):
+        patterns.clear()
         for col in range(len(EEG_data[0]) - 2):
             strPattern = str(EEG_data[row][col]) + str(EEG_data[row][col + 1]) + str(EEG_data[row][col + 2])
             patterns[strPattern] += 1
 
-    totalPossiblePatterns = ((len(EEG_data[0]) - 2) * len(EEG_data))
-    entropy = 0
-    for patt, repetitions in patterns.items():
-        p_i = repetitions / totalPossiblePatterns
-        if p_i > 0:
-            entropy = entropy + -(p_i * math.log(p_i, 2))
-    return entropy
+        row_entropy = 0
+        for patt, repetitions in patterns.items():
+            p_i = repetitions / totalPossiblePatterns
+            if p_i > 0:
+                row_entropy = row_entropy + -(p_i * math.log(p_i, 2))
+        entropies.append(row_entropy)
+
+    return entropies
 
 
 def EnPlot(enZ, enO, enN, enF, enS):
 
-    return 0
+    enZ.sort()
+    enO.sort()
+    enN.sort()
+    enF.sort()
+    enS.sort()
+
+    meanZ = statistics.mean(enZ)
+    sdZ = statistics.stdev(enZ)
+    meanO = statistics.mean(enO)
+    sdO = statistics.stdev(enO)
+    meanN = statistics.mean(enN)
+    sdN = statistics.stdev(enN)
+    meanF = statistics.mean(enF)
+    sdF = statistics.stdev(enF)
+    meanS = statistics.mean(enS)
+    sdS = statistics.stdev(enS)
+
+    plt.plot(enZ, norm.pdf(enZ, meanZ, sdZ), 'r', label='enZ')
+    plt.plot(enO, norm.pdf(enO, meanO, sdO), 'b', label='enO')
+    plt.plot(enN, norm.pdf(enN, meanN, sdN), 'g', label='enN')
+    plt.plot(enF, norm.pdf(enF, meanF, sdF), 'y', label='enF')
+    plt.plot(enS, norm.pdf(enS, meanS, sdS), 'm', label='enS')
+    plt.legend()
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -98,15 +129,15 @@ if __name__ == '__main__':
     S_EEG_data = mat['S_EEG_data']
 
     enZ = ShEn(Z_EEG_data)
-    print("Z_EEG_data entropy: %.3f\n" % enZ)
+    print(enZ)
     enO = ShEn(O_EEG_data)
-    print("O_EEG_data entropy: %.3f\n" % enO)
+    print(enO)
     enN = ShEn(N_EEG_data)
-    print("N_EEG_data entropy: %.3f\n" % enN)
+    print(enN)
     enF = ShEn(F_EEG_data)
-    print("F_EEG_data entropy: %.3f\n" % enF)
+    print(enF)
     enS = ShEn(S_EEG_data)
-    print("S_EEG_data entropy: %.3f\n" % enS)
-    # EnPlot(enZ, enO, enN, enF, enS)
+    print(enS)
+    EnPlot(enZ, enO, enN, enF, enS)
 
 
