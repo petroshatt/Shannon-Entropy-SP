@@ -88,10 +88,20 @@ def ShEn(EEG_data):
                 row_entropy = row_entropy + -(p_i * math.log(p_i, 2))
         entropies.append(row_entropy)
 
+    entropies = [round(item, 3) for item in entropies]
     return entropies
 
 
 def EnPlot(enZ, enO, enN, enF, enS):
+    """
+    Plot normal distribution of each subset's entropies
+    :param enZ: list of subset Z entropies
+    :param enO: list of subset O entropies
+    :param enN: list of subset N entropies
+    :param enF: list of subset F entropies
+    :param enS: list of subset S entropies
+    :return:
+    """
 
     enZ.sort()
     enO.sort()
@@ -129,15 +139,16 @@ if __name__ == '__main__':
     S_EEG_data = mat['S_EEG_data']
 
     enZ = ShEn(Z_EEG_data)
-    print(enZ)
+    print("EnZ: ", enZ)
     enO = ShEn(O_EEG_data)
-    print(enO)
+    print("EnO: ", enO)
     enN = ShEn(N_EEG_data)
-    print(enN)
+    print("EnN: ", enN)
     enF = ShEn(F_EEG_data)
-    print(enF)
+    print("EnF: ", enF)
     enS = ShEn(S_EEG_data)
-    print(enS)
+    print("EnS: ", enS)
+
     EnPlot(enZ, enO, enN, enF, enS)
 
 
