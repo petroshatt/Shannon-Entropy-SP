@@ -9,6 +9,7 @@ import statistics
 import warnings
 warnings.filterwarnings("ignore",category=UserWarning)
 
+
 discr_classes = 10
 pattern_length = 3
 
@@ -16,7 +17,7 @@ pattern_length = 3
 def discretize(EEG_data):
     """
     Discretization function finds the bounds of each class, and converts each
-    signal value to a class - NEEDS TO BE IMPORVED
+    signal value to a class
     Here the discretization classes are 10 and each value is converted to 0-9
     :param EEG_data: The ndarray to be discretized
     :return: The discretized ndarray
@@ -45,6 +46,20 @@ def discretize(EEG_data):
     return EEG_data
 
 
+def list_to_str(s):
+    new = ""
+    for x in s:
+        new += str(x)
+    return new
+
+
+def list_to_str(s):
+    new = ""
+    for x in s:
+        new += str(x)
+    return new
+
+
 def ShEn(EEG_data):
     """
     Shannon Entropy calculation, counting patterns of a specific length using a dict in each row,
@@ -58,12 +73,12 @@ def ShEn(EEG_data):
     patterns = defaultdict(int)
     entropies = []
 
-    totalPossiblePatterns = ((len(EEG_data[0]) - 2) * len(EEG_data))
+    totalPossiblePatterns = ((len(EEG_data[0]) - (pattern_length - 1)) * len(EEG_data))
 
     for row in range(len(EEG_data)):
         patterns.clear()
-        for col in range(len(EEG_data[0]) - 2):
-            str_pattern = str(EEG_data[row][col]) + str(EEG_data[row][col + 1]) + str(EEG_data[row][col + 2])
+        for col in range(len(EEG_data[0]) - (pattern_length - 1)):
+            str_pattern = list_to_str(EEG_data[row][col:col+pattern_length])
             patterns[str_pattern] += 1
 
         row_entropy = 0
