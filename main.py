@@ -17,7 +17,7 @@ pattern_length = 3
 def discretize(EEG_data):
     """
     Discretization function finds the bounds of each class, and converts each
-    signal value to a class
+    signal value to a class - NEEDS TO BE IMPORVED
     Here the discretization classes are 10 and each value is converted to 0-9
     :param EEG_data: The ndarray to be discretized
     :return: The discretized ndarray
@@ -33,6 +33,10 @@ def discretize(EEG_data):
         bounds.append(boundToAdd)
     bounds.append(EEG_data.max())
 
+    print("ARXI")
+    print(bounds)
+    print(EEG_data[0][43:53])
+
     for i in range(len(EEG_data)):
         for j in range(len(EEG_data[0])):
             counter_class = 0
@@ -43,17 +47,18 @@ def discretize(EEG_data):
                 else:
                     counter_class += 1
 
+    print(EEG_data[0][43:53])
+    print("TELOS")
+
     return EEG_data
 
 
 def list_to_str(s):
-    new = ""
-    for x in s:
-        new += str(x)
-    return new
-
-
-def list_to_str(s):
+    """
+    Coverts list of characters to string
+    :param s: list to be converted
+    :return: list as string
+    """
     new = ""
     for x in s:
         new += str(x)
@@ -140,14 +145,19 @@ if __name__ == '__main__':
 
     enZ = ShEn(Z_EEG_data)
     print("EnZ: ", enZ)
+    print()
     enO = ShEn(O_EEG_data)
     print("EnO: ", enO)
+    print()
     enN = ShEn(N_EEG_data)
     print("EnN: ", enN)
+    print()
     enF = ShEn(F_EEG_data)
     print("EnF: ", enF)
+    print()
     enS = ShEn(S_EEG_data)
     print("EnS: ", enS)
+    print()
 
     EnPlot(enZ, enO, enN, enF, enS)
 
