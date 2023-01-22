@@ -1,13 +1,19 @@
+"""
+CHATZITOULOUSIS PETROS 1579
+IOSIFIDIS ANTONIOS 1335
+
+SHANNON ENTROPY
+"""
+
 import math
 import scipy
-import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 from collections import defaultdict
 import statistics
 
 import warnings
-warnings.filterwarnings("ignore",category=UserWarning)
+warnings.filterwarnings("ignore")
 
 
 discr_classes = 10
@@ -33,10 +39,6 @@ def discretize(EEG_data):
         bounds.append(boundToAdd)
     bounds.append(EEG_data.max())
 
-    print("ARXI")
-    print(bounds)
-    print(EEG_data[0][43:53])
-
     for i in range(len(EEG_data)):
         for j in range(len(EEG_data[0])):
             counter_class = 0
@@ -46,9 +48,6 @@ def discretize(EEG_data):
                     break
                 else:
                     counter_class += 1
-
-    print(EEG_data[0][43:53])
-    print("TELOS")
 
     return EEG_data
 
