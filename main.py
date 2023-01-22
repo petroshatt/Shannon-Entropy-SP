@@ -6,6 +6,12 @@ from scipy.stats import norm
 from collections import defaultdict
 import statistics
 
+import warnings
+warnings.filterwarnings("ignore",category=UserWarning)
+
+discr_classes = 10
+pattern_length = 3
+
 
 def discretize(EEG_data):
     """
@@ -16,7 +22,6 @@ def discretize(EEG_data):
     :return: The discretized ndarray
     """
 
-    discr_classes = 10
     bounds = []
 
     epsilon = int((EEG_data.max() - EEG_data.min()) / discr_classes)
@@ -27,35 +32,15 @@ def discretize(EEG_data):
         bounds.append(boundToAdd)
     bounds.append(EEG_data.max())
 
-    # print("Min: ", EEG_data.min())
-    # print("Max: ", EEG_data.max())
-    # print(bounds)
-
     for i in range(len(EEG_data)):
         for j in range(len(EEG_data[0])):
-            if bounds[0] <= EEG_data[i][j] < bounds[1]:
-                EEG_data[i][j] = 0
-            elif bounds[1] <= EEG_data[i][j] < bounds[2]:
-                EEG_data[i][j] = 1
-            elif bounds[2] <= EEG_data[i][j] < bounds[3]:
-                EEG_data[i][j] = 2
-            elif bounds[3] <= EEG_data[i][j] < bounds[4]:
-                EEG_data[i][j] = 3
-            elif bounds[4] <= EEG_data[i][j] < bounds[5]:
-                EEG_data[i][j] = 4
-            elif bounds[5] <= EEG_data[i][j] < bounds[6]:
-                EEG_data[i][j] = 5
-            elif bounds[6] <= EEG_data[i][j] < bounds[7]:
-                EEG_data[i][j] = 6
-            elif bounds[7] <= EEG_data[i][j] < bounds[8]:
-                EEG_data[i][j] = 7
-            elif bounds[8] <= EEG_data[i][j] < bounds[9]:
-                EEG_data[i][j] = 8
-            elif bounds[9] <= EEG_data[i][j] <= bounds[10]:
-                EEG_data[i][j] = 9
-
-    # unique, counts = np.unique(EEG_data, return_counts=True)
-    # print(np.asarray((unique, counts)).T)
+            counter_class = 0
+            for index in range(len(bounds) - 1):
+                if bounds[index] <= EEG_data[i][j] <= bounds[index + 1]:
+                    EEG_data[i][j] = counter_class
+                    break
+                else:
+                    counter_class += 1
 
     return EEG_data
 
@@ -78,8 +63,8 @@ def ShEn(EEG_data):
     for row in range(len(EEG_data)):
         patterns.clear()
         for col in range(len(EEG_data[0]) - 2):
-            strPattern = str(EEG_data[row][col]) + str(EEG_data[row][col + 1]) + str(EEG_data[row][col + 2])
-            patterns[strPattern] += 1
+            str_pattern = str(EEG_data[row][col]) + str(EEG_data[row][col + 1]) + str(EEG_data[row][col + 2])
+            patterns[str_pattern] += 1
 
         row_entropy = 0
         for patt, repetitions in patterns.items():
